@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     Button scrapeButton;
     RequestQueue mQueue;
     JsonObjectRequest request;
-    TextView showResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         linkInput = findViewById(R.id.edittext1);
         scrapeButton = findViewById(R.id.button1);
-        showResponse = findViewById(R.id.tv);
-        showResponse.setMovementMethod(new ScrollingMovementMethod());
 
         mQueue = Volley.newRequestQueue(this);
 
@@ -54,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         scrapeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showResponse.setText("");
                 System.out.println("Scrape Button Clicked");
                 try {
                     jsonGet();
@@ -81,17 +78,30 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        int[] grades=  new int[6];
                         System.out.println(response.toString());
+                        try {
+                            grades[0] = response.getInt("Type1");
+                            grades[1] = response.getInt("Type2");
+                            grades[2] = response.getInt("Type3");
+                            grades[3] = response.getInt("Type4");
+                            grades[4] = response.getInt("Type5");
+                            grades[5] = response.getInt("Type6");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Intent gradeIntent = new Intent(getApplicationContext(), GradeActivity.class);
-                        gradeIntent.putExtra("response", response.toString());
+                        gradeIntent.putExtra("grades", grades);
                         startActivity(gradeIntent);
                     }
-                },
+                },      //Toast.makeText(getActivity(), "This is my Toast message!",
+//                Toast.LENGTH_LONG).show();
+                //
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Cannot be Scraped", Toast.LENGTH_LONG).show();
                         System.out.println(error.toString());
-                        showResponse.setText(error.toString());
                     }
                 }){
                 @Override
@@ -112,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         request.setRetryPolicy(new DefaultRetryPolicy(
-                2000000,
+                200000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
