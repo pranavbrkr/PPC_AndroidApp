@@ -18,9 +18,7 @@ public class GradeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grade);
 
         Intent gradeIntent = getIntent();
-        String response = gradeIntent.getStringExtra("response");
         int[] grades = gradeIntent.getIntArrayExtra("grades");
-        System.out.println(grades[0]+ " "+ grades[1]+ " "+ grades[2]+ " "+ grades[3]+ " "+ grades[4]+ " "+grades[5]);
 
         Resources res = getResources();
 

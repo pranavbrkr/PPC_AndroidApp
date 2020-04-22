@@ -23,20 +23,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
 
     EditText linkInput;
     Button scrapeButton;
     RequestQueue mQueue;
-    JsonObjectRequest request;
+    ArrayList<String> sentences = new ArrayList<>(6);
+    JsonObjectRequest request1, request2;
+    int[] grades = new int[6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,45 +63,42 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException | UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-//                Intent gradeIntent = new Intent(getApplicationContext(), GradeActivity.class);
-//                startActivity(gradeIntent);
             }
         });
     }
 
-    private void jsonGet() throws JSONException, UnsupportedEncodingException {
-        String url = "http://192.168.1.9:8000/privacy/";
+    private void jsonGet() throws JSONException, UnsupportedEncodingException, IndexOutOfBoundsException {
+        String url = "https://rest-api-privacy.herokuapp.com/privacy/";
           JSONObject jsonBody = new JSONObject();
           jsonBody.put("weblink", linkInput.getText().toString());
           final String requestBody= jsonBody.toString().replace("\\","");
-          System.out.println("FFFFFFFFFFFFFFFFFF : " + requestBody);
-        System.out.println("FFFFFFFFFFFFFFFFFF : " + requestBody.getBytes("utf-8"));
-        request = new JsonObjectRequest(
+          System.out.println("Body : " + requestBody);
+        System.out.println("BodyBytes : " + requestBody.getBytes("utf-8"));
+        request1 = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        int[] grades=  new int[6];
-                        System.out.println(response.toString());
                         try {
-                            grades[0] = response.getInt("Type1");
-                            grades[1] = response.getInt("Type2");
-                            grades[2] = response.getInt("Type3");
-                            grades[3] = response.getInt("Type4");
-                            grades[4] = response.getInt("Type5");
-                            grades[5] = response.getInt("Type6");
+                            for(int i = 0 ; i < 6 ; i++)
+                            {
+                                JSONObject ooo = new JSONObject();
+                                ooo.put("Type", ("Type" + Integer.toString((i + 1))));
+                                ooo.put("Data", response.getJSONArray(("Type" + Integer.toString((i + 1)))));
+                                sentences.add(ooo.toString());
+                            }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Intent gradeIntent = new Intent(getApplicationContext(), GradeActivity.class);
-                        gradeIntent.putExtra("grades", grades);
-                        startActivity(gradeIntent);
+                        System.out.println("\n" + "************************************" + "\n");
+                        Intent loadIntent = new Intent(getApplicationContext(), LoadActivity.class);
+                        loadIntent.putStringArrayListExtra("sentences", sentences);
+                        startActivity(loadIntent);
                     }
-                },      //Toast.makeText(getActivity(), "This is my Toast message!",
-//                Toast.LENGTH_LONG).show();
-                //
+                },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -121,11 +123,13 @@ public class MainActivity extends AppCompatActivity {
                 }
         };
 
-        request.setRetryPolicy(new DefaultRetryPolicy(
+        request1.setRetryPolicy(new DefaultRetryPolicy(
                 200000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-          mQueue.add(request);
+        mQueue.add(request1);
+
     }
+
 }
