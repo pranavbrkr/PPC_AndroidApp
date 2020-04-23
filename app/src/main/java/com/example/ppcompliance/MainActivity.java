@@ -2,6 +2,7 @@ package com.example.ppcompliance;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     RequestQueue mQueue;
     ArrayList<String> sentences = new ArrayList<>(6);
     JsonObjectRequest request1, request2;
-    int[] grades = new int[6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +56,23 @@ public class MainActivity extends AppCompatActivity {
 
 
         scrapeButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("WrongConstant")
             @Override
             public void onClick(View v) {
                 scrapeButton.setEnabled(false);
-                Toast.makeText(MainActivity.this, "Link Received", Toast.LENGTH_LONG).show();
-                System.out.println("Scrape Button Clicked");
-                try {
-                    jsonGet();
-                } catch (JSONException | UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                if(linkInput.getText().toString().isEmpty())
+                {
+                    scrapeButton.setEnabled(true);
+                    Toast.makeText(MainActivity.this, "Input not given", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    System.out.println("Scrape Button Clicked");
+                    try {
+                        jsonGet();
+                    } catch (JSONException | UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -104,8 +113,12 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, "Cannot be Scraped", Toast.LENGTH_LONG).show();
                         scrapeButton.setEnabled(true);
+                        NetworkResponse nr = error.networkResponse;
+                        if(nr == null)
+                            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(MainActivity.this, "Cannot be Scraped", Toast.LENGTH_LONG).show();
                         System.out.println(error.toString());
                     }
                 }){
