@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         scrapeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                scrapeButton.setEnabled(false);
+                Toast.makeText(MainActivity.this, "Link Received", Toast.LENGTH_LONG).show();
                 System.out.println("Scrape Button Clicked");
                 try {
                     jsonGet();
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(MainActivity.this, "Cannot be Scraped", Toast.LENGTH_LONG).show();
+                        scrapeButton.setEnabled(true);
                         System.out.println(error.toString());
                     }
                 }){
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         request1.setRetryPolicy(new DefaultRetryPolicy(
-                200000,
+                10000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 

@@ -17,6 +17,7 @@ public class GradeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grade);
 
+
         Intent gradeIntent = getIntent();
         int[] grades = gradeIntent.getIntArrayExtra("grades");
 
@@ -37,7 +38,7 @@ public class GradeActivity extends AppCompatActivity {
 
         ProgressBar PB2 = findViewById(R.id.pb2);
         TextView TV2 = findViewById(R.id.tpb2);
-        PB2.setProgress(grades[0]);
+        PB2.setProgress(grades[1]);
         TV2.setText(grades[1] + "%");
         if(grades[1] < 34)
             PB2.setProgressDrawable(res.getDrawable( R.drawable.high_grade));
