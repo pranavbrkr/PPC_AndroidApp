@@ -14,10 +14,10 @@ Standard GDPR compliance was considered to form 6 buckets for data usage, namely
  
  ## Steps involved in grading the policies
  
- - Extraction of the text from the provided link
- - Stardardization of text i.e. removing html tags among other impurities to get text in pure string format
- - Classification of the sentences in the 6 aforementioned buckets
- - Grading the classified sentences into thre levels of security
+ 1. Extraction of the text from the provided link
+ 2. Stardardization of text i.e. removing html tags among other impurities to get text in pure string format
+ 3. Classification of the sentences in the 6 aforementioned buckets using logistic regression
+ 4. Grading the classified sentences into three levels of security using sequence modelling
  
  ## Screenshots
 
