@@ -19,7 +19,17 @@ Standard GDPR compliance was considered to form 6 buckets for data usage, namely
  3. Classification of the sentences in the 6 aforementioned buckets using logistic regression
  4. Grading the classified sentences into three levels of security using sequence modelling
  
- ## Screenshots
+ ## Working
+ 
+ 1. The android application provides the input for the privacy policy link
+ 2. This link is then sent to the [Django REST server](https://github.com/SiddharthChabukswar/ppc-rest-server)
+ 3. This server then
+    * Scrapes the text and removes extraneous data (like HTML tags that might have been picked up during scrapping) from it
+    * Categorizes each sentence into aforementioned categories
+    * Grades the privacy policy based on these categorized sentences and posts the response to the application endpoint
+    * The application displays the score as received from the server
+
+## Screenshots
 
 - Input screen
 
